@@ -9,11 +9,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         @media only screen and (max-width: 600px) {
+            #title {
+                font-size: 16px !important;
+                font-weight: bold;
+            }
+
             .label {
                 font-size: 14px;
             }
 
-            #age {
+            #age, footer {
                 font-size: 18px;
             }
 
@@ -23,11 +28,16 @@
         }
 
         @media only screen and (max-width: 500px) {
+            #title {
+                font-size: 14px !important;
+                font-weight: bold;
+            }
+
             .label {
                 font-size: 12px;
             }
 
-            #age {
+            #age, footer {
                 font-size: 15px;
             }
 
@@ -37,11 +47,16 @@
         }
 
         @media only screen and (max-width: 420px) {
+            #title {
+                font-size: 12px !important;
+                font-weight: bold;
+            }
+
             .label {
                 font-size: 10px;
             }
 
-            #age {
+            #age, footer {
                 font-size: 14px;
             }
 
@@ -51,11 +66,16 @@
         }
 
         @media only screen and (max-width: 360px) {
+            #title {
+                font-size: 10px !important;
+                font-weight: bold;
+            }
+
             .label {
                 font-size: 10px;
             }
 
-            #age {
+            #age, footer {
                 font-size: 10px;
             }
 
@@ -69,12 +89,12 @@
     <div class="col-lg-8 mx-auto p-4 py-md-5">
         <header class="d-flex align-items-center pb-3 mb-5 border-bottom">
             <a href="/" class="d-flex align-items-center text-body-emphasis text-decoration-none">
-                <span class="fs-4">Life Visualization</span>
+                <span class="fs-4" id="title">Life Visualization</span>
             </a>
 
-            <div class="ms-auto">
-                <label for="dob">Enter your birth date: </label>
-                <input data-provide="datepicker" id="dob" class="text-center">
+            <div class="ms-auto d-flex align-items-right">
+                <label for="dob" class="label align-self-center">Enter your birth date: </label>
+                <input data-provide="datepicker" id="dob" class="text-center" style="width: 100px">
             </div>
         </header>
         <main class="text-center">
@@ -95,7 +115,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         for (let i = 1; i <= 9; i++) {
-            $('#visualization').append('<div class="years-block mb-4"><p class="position-absolute">' + (i - 1) * 10 + '</p></div>');
+            $('#visualization').append('<div class="years-block label mb-4"><p class="position-absolute">' + (i - 1) * 10 + '</p></div>');
         }
         for (let i = 1; i <= 10; i++) {
             $('.years-block').append('<div class="year lh-1"></div>');

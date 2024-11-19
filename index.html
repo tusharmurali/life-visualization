@@ -83,6 +83,30 @@
                 font-size: 7px;
             }
         }
+
+        .remaining-time {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .time-block {
+            text-align: center;
+        }
+        .time-block span {
+            font-size: 30px;
+            font-weight: bold;
+        }
+        .label {
+            font-size: 14px;
+        }
+        .time-caption {
+            margin-bottom: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #555;
+        }
     </style>
 </head>
 <body>
@@ -100,9 +124,29 @@
         <main class="text-center">
             <div class="row g-5">
                 <div class="col-md-12" id="visualization">
-                    <p class="label position-absolute">Years<br><i class="fa-sharp fa-solid fa-arrow-down"></i></p>
                     <h2 class="text-body-emphasis mb-4" id="age"></h2>
-                    <p class="label"><i class="fa-solid fa-arrow-left"></i> Weeks <i class="fa-solid fa-arrow-right"></i></p>
+                    <div class="time-caption">
+                        <p>You have approximately</p>
+                    </div>
+                    <div id="remaining-time" class="remaining-time">
+                        <div class="time-block" id="months-block">
+                            <span id="remaining-months"></span>
+                            <div class="label">Months</div>
+                        </div>
+                        <div class="time-block" id="weeks-block">
+                            <span id="remaining-weeks"></span>
+                            <div class="label">Weeks</div>
+                        </div>
+                        <div class="time-block" id="days-block">
+                            <span id="remaining-days"></span>
+                            <div class="label">Days</div>
+                        </div>
+                    </div>
+                    <div class="time-caption">
+                        <p>remaining, assuming you live to <strong id="lifespan-value"></strong> years.</p>
+                    </div>
+                    <p class="label position-absolute" style="margin-bottom: 45px;">Years<br><i class="fa-sharp fa-solid fa-arrow-down"></i></p>
+                    <p class="label" style="margin-bottom: 45px;"><i class="fa-solid fa-arrow-left"></i> Weeks <i class="fa-solid fa-arrow-right"></i></p>
                 </div>
             </div>
         </main>
@@ -114,19 +158,161 @@
     <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
-        for (let i = 1; i <= 9; i++) {
-            $('#visualization').append('<div class="years-block label mb-4"><p class="position-absolute">' + (i - 1) * 10 + '</p></div>');
-        }
-        for (let i = 1; i <= 10; i++) {
-            $('.years-block').append('<div class="year lh-1"></div>');
-        }
-        for (let i = 1; i <= 52; i++) {
-            $('.year').append('<i class="fa-solid fa-person small"></i>');
+        let EXPECTED_LIFESPAN_YEARS = 80;
+        let lifespanDate;
+        const data = [
+            76.42,
+            75.84,
+            74.87,
+            73.88,
+            72.91,
+            71.91,
+            70.93,
+            69.93,
+            68.94,
+            67.95,
+            66.96,
+            65.96,
+            64.97,
+            63.98,
+            63,
+            62.01,
+            61.03,
+            60.06,
+            59.1,
+            58.14,
+            57.19,
+            56.24,
+            55.29,
+            54.36,
+            53.42,
+            52.49,
+            51.55,
+            50.62,
+            49.7,
+            48.78,
+            47.86,
+            46.95,
+            46.04,
+            45.13,
+            44.22,
+            43.32,
+            42.41,
+            41.51,
+            40.61,
+            39.72,
+            38.83,
+            37.94,
+            37.05,
+            36.17,
+            35.28,
+            34.41,
+            33.53,
+            32.67,
+            31.81,
+            30.95,
+            30.1,
+            29.25,
+            28.42,
+            27.59,
+            26.77,
+            25.96,
+            25.15,
+            24.36,
+            23.57,
+            22.8,
+            22.03,
+            21.28,
+            20.54,
+            19.8,
+            19.08,
+            18.35,
+            17.64,
+            16.93,
+            16.23,
+            15.54,
+            14.85,
+            14.17,
+            13.5,
+            12.84,
+            12.19,
+            11.56,
+            10.94,
+            10.34,
+            9.76,
+            9.19,
+            8.65,
+            8.12,
+            7.61,
+            7.12,
+            6.64,
+            6.19,
+            5.76,
+            5.35,
+            4.97,
+            4.62,
+            4.28,
+            3.97,
+            3.68,
+            3.43,
+            3.2,
+            2.99,
+            2.81,
+            2.64,
+            2.49,
+            2.35,
+            2.22,
+            2.09,
+            1.98,
+            1.86,
+            1.75,
+            1.65,
+            1.54,
+            1.44,
+            1.36,
+            1.27,
+            1.18,
+            1.1,
+            1.02,
+            0.95,
+            0.88,
+            0.82,
+            0.76,
+            0.7,
+            0.65,
+            0.6
+        ]
+
+        function updateBlocks() {
+            let fullDecades = Math.floor(EXPECTED_LIFESPAN_YEARS / 10);
+            let remainingYears = EXPECTED_LIFESPAN_YEARS % 10;
+            let remainingWeeks = Math.ceil((remainingYears % 1) * 52);
+            console.log(fullDecades);
+            console.log(remainingWeeks);
+            console.log(remainingYears);
+
+            for (let i = 1; i <= fullDecades + 1; i++) {
+                $('#visualization').append('<div class="years-block label mb-4"><p class="position-absolute">' + (i - 1) * 10 + '</p></div>');
+            }
+            for (let i = 1; i <= 10; i++) {
+                $('.years-block').slice(0, -1).append('<div class="year lh-1"></div>');
+            }
+            for (let i = 1; i <= remainingYears; i++) {
+                $('.years-block').last().append('<div class="year lh-1"></div>');
+            }
+            for (let i = 1; i <= 52; i++) {
+                $('.year').slice(0, -1).append('<i class="fa-solid fa-person small"></i>');
+            }
+            for (let i = 1; i <= remainingWeeks; i++) {
+                $('.year').last().append('<i class="fa-solid fa-person small"></i>');
+            }
         }
 
         $('#dob').change(function() {
             localStorage.setItem('dob', $(this).val());
             let age = getAge($('#dob').val());
+            updateRemainingTime($('#dob').val());
+            updateBlocks()
             let year = $('.year');
             year.find('*').removeClass('text-primary');
             year.slice(0, age).find('*').addClass('text-primary');
@@ -141,6 +327,7 @@
 
         setInterval(function() {
             $('#age').text('You are ' + getAge($('#dob').val()) + ' years old.');
+            updateRemainingTime($('#dob').val());
         }, 50);
 
         function getAge(dateString) {
@@ -161,6 +348,33 @@
                 age += (today - lastBirthDate) / (nextBirthDate - lastBirthDate);
             }
             return age;
+        }
+
+        function updateRemainingTime(dateString) {
+            let today = new Date();
+            let birthDate = new Date(dateString);
+            let age = $('#age').val();
+            const floorAge = Math.floor(age), ceilAge = Math.ceil(age);
+            EXPECTED_LIFESPAN_YEARS = data[floorAge] + (age - floorAge) * (data[ceilAge] - data[floorAge]);
+            if (!EXPECTED_LIFESPAN_YEARS) EXPECTED_LIFESPAN_YEARS = 80;
+            lifespanDate = new Date(birthDate.getTime() + EXPECTED_LIFESPAN_YEARS * 365.25 * 24 * 60 * 60 * 1000);
+
+            let remainingTime = lifespanDate - today;
+            if (remainingTime <= 0) {
+                $('#remaining-months').text('0');
+                $('#remaining-weeks').text('0');
+                $('#remaining-days').text('0');
+                return;
+            }
+
+            let remainingDays = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
+            let remainingWeeks = Math.floor(remainingDays / 7);
+            let remainingMonths = Math.floor(remainingDays / 30);
+
+            $('#remaining-months').text(remainingMonths);
+            $('#remaining-weeks').text(remainingWeeks);
+            $('#remaining-days').text(remainingDays);
+            $('#lifespan-value').text(EXPECTED_LIFESPAN_YEARS);
         }
     </script>
 </body>
